@@ -7,7 +7,6 @@ on:
 
 jobs:
   auto-pr:
-    if: github.actor == 'd-koshevoy'
     runs-on: ubuntu-latest
 
     steps:
