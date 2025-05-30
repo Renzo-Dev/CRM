@@ -1,4 +1,4 @@
-import {defineConfig} from 'vite'
+import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
 
@@ -13,20 +13,20 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@use "@/assets/styles/_variables.scss" as *;`
-      }
-    }
+        additionalData: `@use "@/assets/styles/_variables.scss" as *;`,
+      },
+    },
   },
   server: {
     port: 5173,
-    open: true,
-    proxy: {
-      '/auth': 'http://localhost',
-      '/user': 'http://localhost',
-      '/lead': 'http://localhost',
-      '/task': 'http://localhost',
-      '/file': 'http://localhost',
-      '/notify': 'http://localhost',
-    },
+    // open: true,
+    // proxy: {
+    //   '/auth': 'http://localhost',
+    //   '/user': 'http://localhost',
+    //   '/lead': 'http://localhost',
+    //   '/task': 'http://localhost',
+    //   '/file': 'http://localhost',
+    //   '/notify': 'http://localhost',
+    // },
   },
 })
