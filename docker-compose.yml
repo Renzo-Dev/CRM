@@ -38,7 +38,7 @@ services:
     build:
       context: ./services/auth-service
     volumes:
-      - ./services/auth-service/src:/app
+      - ./services/auth-service/src:/var/www
     expose:
       - "9000"  # внутренний порт для nginx
     networks:
