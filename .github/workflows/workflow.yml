@@ -2,19 +2,20 @@ name: Auto PR to dev
 
 on:
   push:
+    branches:
+      - d-koshevoy
     branches-ignore:
       - main
       - dev
+permissions:
+  contents: write
 
 jobs:
   create-pull-request:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Create Pull Request to dev
+      - uses: actions/checkout@v4
+      - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.CRM_SECRET }}
