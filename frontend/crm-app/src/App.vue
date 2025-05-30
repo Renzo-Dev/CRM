@@ -4,7 +4,7 @@
     <main class="flex-grow">
       <router-view/>
     </main>
-<!--    <Footer/>-->
+    <Footer/>
   </div>
 </template>
 
