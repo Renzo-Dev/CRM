@@ -1,25 +1,30 @@
-name: Create Merge Request to Dev
+name: Auto Merge to Dev
 
 on:
   push:
     branches:
-      - "*"
+      - d-koshevoy
 
 jobs:
-  create-merge-request:
+  auto_merge:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create Merge Request
-        uses: peter-evans/create-pull-request@v5
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: "Merge d-kosh into dev"
-          body: "Automated PR from d-kosh to dev"
-          base: dev
-          branch: "merge-d-kosh-to-dev"
-          delete-branch: true
-          draft: false
-          labels: "automated"
+          title: "Auto Merge d-koshevoy into dev"
+          branch: "auto-merge/d-koshevoy-to-dev"
+          base: "dev"
+          body: "Automatically merging changes from `d-koshevoy` into `dev`."
+
+      - name: Enable Auto Merge
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.number }}
+          merge-method: merge
