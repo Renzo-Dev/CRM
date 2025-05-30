@@ -1,30 +1,51 @@
-name: CI on PR to dev
+name: Auto PR and Merge to dev
 
 on:
-  pull_request:
+  push:
     branches:
+      - '*'   # Срабатывает на push в любую ветку, кроме dev (см. ниже исключение)
+      # Можно добавить исключение, чтобы не срабатывало на dev:
+    branches-ignore:
       - dev
+      - main
 
 jobs:
-  build:
+  create-and-merge-pr:
+    if: github.ref_name != 'dev' || github.ref_name != 'main' # Не запускать для самой ветки dev or main
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+      - name: Create Pull Request to dev
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
         with:
-          php-version: '8.2'
+          base: dev
+          branch: ${{ github.ref_name }}
+          title: "Auto PR from ${{ github.ref_name }} to dev"
+          body: "This PR was automatically created by GitHub Actions."
+          labels: auto-pr
 
-      - name: Install Composer dependencies
-        run: composer install --no-progress --no-suggest --prefer-dist
-
-      # Optional: Basic PHP linting (syntax check)
-      - name: PHP Syntax Check
-        run: find . -type f -name "*.php" -exec php -l {} \;
-
-      # Optional: Run PHP CodeSniffer (if you use it)
-      # - name: Run PHP CodeSniffer
-      #   run: vendor/bin/phpcs
+      - name: Merge PR if created
+        if: steps.cpr.outputs.pull-request-url != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: `${context.repo.owner}:${github.ref_name}`,
+              base: "dev",
+              state: "open"
+            });
+            if (pr.data.length > 0) {
+              const prNumber = pr.data[0].number;
+              await github.rest.pulls.merge({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                merge_method: "merge"
+              });
+            }
