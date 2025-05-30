@@ -2,18 +2,19 @@ name: Auto PR and Merge to dev
 
 on:
   push:
-    branches:
-      - '*'   # Срабатывает на push в любую ветку, кроме dev (см. ниже исключение)
-      # Можно добавить исключение, чтобы не срабатывало на dev:
+    branches-ignore:
+      - dev   # Срабатывает на push в любую ветку, кроме dev
 
 jobs:
   create-and-merge-pr:
-    if: github.ref_name != 'dev' || github.ref_name != 'main' # Не запускать для самой ветки dev or main
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
 
       - name: Create Pull Request to dev
         id: cpr
