@@ -13,7 +13,8 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@use "@/assets/styles/_variables.scss" as *;`,
+        // Дополнительные настройки для SCSS
+        // Например, можно добавить глобальные переменные или миксины
       },
     },
   },

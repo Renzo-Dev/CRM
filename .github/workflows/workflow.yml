@@ -5,9 +5,6 @@ on:
     branches:
       - '*'   # Срабатывает на push в любую ветку, кроме dev (см. ниже исключение)
       # Можно добавить исключение, чтобы не срабатывало на dev:
-    branches-ignore:
-      - dev
-      - main
 
 jobs:
   create-and-merge-pr:
