@@ -19,6 +19,18 @@ services:
       - lead-service
       - task-service
       - file-service
+      - frontend-develop
+
+    # 🌐 FRONTEND — Веб-приложение (Vue.js)
+  frontend-develop:
+    container_name: frontend_develop
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend/crm-app/:/app
+    networks:
+      - crm-network
 
   # 🔐 AUTH SERVICE — Аутентификация и JWT
   auth-service:
@@ -26,9 +38,7 @@ services:
     build:
       context: ./services/auth-service
     volumes:
-      - ./services/auth-service/src:/app
-    env_file:
-      - ./services/auth-service/.env
+      - ./services/auth-service/src:/var/www
     expose:
       - "9000"  # внутренний порт для nginx
     networks:
@@ -44,9 +54,9 @@ services:
     build:
       context: ./services/user-service
     volumes:
-      - ./services/user-service/src:/app
-    env_file:
-      - ./services/user-service/.env
+      - ./services/user-service/src:/var/www
+    #    env_file:
+    #      - ./services/user-service/.env
     expose:
       - "9001"
     networks:
@@ -60,9 +70,9 @@ services:
     build:
       context: ./services/lead-service
     volumes:
-      - ./services/lead-service/src:/app
-    env_file:
-      - ./services/lead-service/.env
+      - ./services/lead-service/src:/var/www
+    #    env_file:
+    #      - ./services/lead-service/.env
     expose:
       - "9002"
     networks:
@@ -76,9 +86,9 @@ services:
     build:
       context: ./services/task-service
     volumes:
-      - ./services/task-service/src:/app
-    env_file:
-      - ./services/task-service/.env
+      - ./services/task-service/src:/var/www
+    #    env_file:
+    #      - ./services/task-service/.env
     expose:
       - "9003"
     networks:
@@ -94,10 +104,10 @@ services:
     build:
       context: ./services/file-service
     volumes:
-      - ./services/file-service/src:/app
+      - ./services/file-service/src:/var/www
       - minio-data:/data
-    env_file:
-      - ./services/file-service/.env
+    #    env_file:
+    #      - ./services/file-service/.env
     expose:
       - "9004"
     networks:
@@ -112,9 +122,9 @@ services:
     build:
       context: ./services/notification-service
     volumes:
-      - ./services/notification-service/src:/app
-    env_file:
-      - ./services/notification-service/.env
+      - ./services/notification-service/src:/var/www
+    #    env_file:
+    #      - ./services/notification-service/.env
     expose:
       - "9005"
     networks:
