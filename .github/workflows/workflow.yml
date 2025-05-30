@@ -1,38 +1,25 @@
-name: CI and Auto PR to Dev
+name: Auto PR to dev
 
 on:
   push:
-    branches:
-      - '**'
+    branches-ignore:
+      - main
+      - dev
 
 jobs:
-  ci:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # Add any build or lint steps you want below.
-      # You mentioned no Laravel tests, so only basic steps are included.
-
-      - name: List files (basic check)
-        run: ls -la
-
   create-pull-request:
-    needs: ci
-    if: github.ref != 'refs/heads/dev'
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Create Pull Request to dev branch
+      - name: Create Pull Request to dev
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          title: 'Auto PR: ${{ github.ref_name }} → dev'
+          commit-message: 'Auto PR from ${{ github.ref_name }}'
           base: dev
           branch: ${{ github.ref_name }}
-          title: 'Auto PR: ${{ github.ref_name }} → dev'
-          body: |
-            This PR was automatically created from branch ${{ github.ref_name }} to dev.
           draft: false
