@@ -17,7 +17,7 @@ jobs:
       - name: Create Pull Request to dev
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.CRM_SECRET }}
           title: 'Auto PR: ${{ github.ref_name }} → dev'
           commit-message: 'Auto PR from ${{ github.ref_name }}'
           base: dev
