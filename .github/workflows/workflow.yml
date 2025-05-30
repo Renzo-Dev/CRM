@@ -1,48 +1,38 @@
-name: Auto PR and Merge to dev
+name: CI and Auto PR to Dev
 
 on:
   push:
     branches:
-      - '*'   # Срабатывает на push в любую ветку, кроме dev (см. ниже исключение)
-      # Можно добавить исключение, чтобы не срабатывало на dev:
+      - '**'
 
 jobs:
-  create-and-merge-pr:
-    if: github.ref_name != 'dev' || github.ref_name != 'main' # Не запускать для самой ветки dev or main
+  ci:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create Pull Request to dev
-        id: cpr
+      # Add any build or lint steps you want below.
+      # You mentioned no Laravel tests, so only basic steps are included.
+
+      - name: List files (basic check)
+        run: ls -la
+
+  create-pull-request:
+    needs: ci
+    if: github.ref != 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Pull Request to dev branch
         uses: peter-evans/create-pull-request@v6
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           base: dev
           branch: ${{ github.ref_name }}
-          title: "Auto PR from ${{ github.ref_name }} to dev"
-          body: "This PR was automatically created by GitHub Actions."
-          labels: auto-pr
-
-      - name: Merge PR if created
-        if: steps.cpr.outputs.pull-request-url != ''
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const pr = await github.rest.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              head: `${context.repo.owner}:${github.ref_name}`,
-              base: "dev",
-              state: "open"
-            });
-            if (pr.data.length > 0) {
-              const prNumber = pr.data[0].number;
-              await github.rest.pulls.merge({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: prNumber,
-                merge_method: "merge"
-              });
-            }
+          title: 'Auto PR: ${{ github.ref_name }} → dev'
+          body: |
+            This PR was automatically created from branch ${{ github.ref_name }} to dev.
+          draft: false
