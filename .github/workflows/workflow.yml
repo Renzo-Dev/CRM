@@ -1,0 +1,25 @@
+name: Create Merge Request to Dev
+
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  create-merge-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Merge Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "Merge d-kosh into dev"
+          body: "Automated PR from d-kosh to dev"
+          base: dev
+          branch: "merge-d-kosh-to-dev"
+          delete-branch: true
+          draft: false
+          labels: "automated"
