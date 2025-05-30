@@ -5,7 +5,6 @@
       <router-view />
     </main>
     <Footer />
-    <div>TEST</div>
   </div>
 </template>
 
